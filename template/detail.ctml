@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title><c:splice lquery='(text kanji)'></c:splice> - 漢字木</title>
+    <link rel="stylesheet" type="text/css" href="../static/style.css" @href="/static/kanji-tree/style.css" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  </head>
+  <body>
+    <header>
+      <h1><a href="#">漢字木</a></h1>
+    </header>
+    <article class="detail">
+      <nav id="sequence">
+        <a class="first" title="First" href="#"><i class="fa fa-fast-backward" aria-hidden="true"></i></a>
+        <a class="previous" title="Previous" href="#"><i class="fa fa-step-backward" aria-hidden="true"></i></a>
+        <span class="number">130</span>
+        <a class="next" title="Next" href="#"><i class="fa fa-step-forward" aria-hidden="true"></i></a>
+        <a class="last" title="Last" href="#"><i class="fa fa-fast-forward" aria-hidden="true"></i></a>
+      </nav>
+      <header id="kanji">
+        <h2>
+          <a class="kanji" href="#">字</a>
+        </h2>
+        <div>
+          <ul class="translation" lang="en">
+            <li>character</li>
+            <li>letter</li>
+            <li>word</li>
+            <li>section of village</li>
+          </ul>
+          <ul class="components">
+            <li><a class="kanji" href="#">宀</a></li>
+            <li><a class="kanji" href="#">子</a></li>
+          </ul>
+          <ul class="radicals">
+            <li><a class="kanji" href="#">宀</a></li>
+            <li><a class="kanji" href="#">了</a></li>
+            <li><a class="kanji" href="#">一</a></li>
+          </ul>
+          <ul class="constitutes">
+            <li><a class="kanji" href="#">字</a></li>
+          </ul>
+        </div>
+        <nav class="links">
+          <a class="jisho" href="http://jisho.org/search/字%20%23kanji">Jisho
+            <i><img src="http://assets.jisho.org/assets/favicon-062c4a0240e1e6d72c38aa524742c2d558ee6234497d91dd6b75a182ea823d65.ico" /></i></a>
+          <a class="jigen" href="http://jigen.net/data/字?type2=1&rs=100">Jigen
+            <i><img src="http://jigen.net/favicon.ico" /></i></a>
+          <a class="saiga-jp" href="http://www.saiga-jp.com/cgi-bin/dic.cgi?m=search&j=字">Saiga-JP
+            <i><img src="http://www.saiga-jp.com/favicon.ico" /></i></a>
+          <a class="kanjidamage" href="http://www.kanjidamage.com/kanji/search?q=字">Kanjidamage
+            <i><img src="http://www.kanjidamage.com/favicon.ico" /></i></a>
+          <a class="chineseetymology" href="http://www.chineseetymology.org/CharacterEtymology.aspx?submitButton1=Etymology&characterInput=字">Etymology
+            <i><img src="" /></i></a>
+        </nav>
+      </header>
+      <div id="onkun" >
+        <section id="onyomi">
+          <h3>Onyomi</h3>
+          <ul>
+            <li>
+              <div class="onyomi">
+                <ruby><rb>ジ</rb></ruby>
+              </div>
+            </li>
+          </ul>
+        </section>
+        <section id="kunyomi">
+          <h3>Kunyomi</h3>
+          <ul>
+            <li>
+              <div class="kunyomi">
+                <ruby><rb>あざ</rb></ruby>
+                <span class="translation" lang="en">
+                  Section of village
+                </span>
+              </div>
+            </li>
+            <li>
+              <div class="kunyomi">
+                <ruby><rb>あざな</rb></ruby>
+                <span class="translation" lang="en">
+                  Chinese courtesy name
+                </span>
+              </div>
+            </li>
+            <li>
+              <div class="kunyomi">
+                <ruby><rb>-な</rb></ruby>
+                <span class="translation" lang="en">
+                </span>
+              </div>
+            </li>
+          </ul>
+        </section>
+      </div>
+      <section id="jukugo">
+        <h3>Jukugo</h3>
+        <ul>
+          <li>
+            <div class="jukugo">
+              <ruby>
+                <rb><a class="kanji" href="#">漢</a></rb><rt>かん</rt>
+                <rb><a class="kanji" href="#">字</a></rb><rt>じ</rt>
+              </ruby>
+              <ul class="translation" lang="en">
+                <li>chinese character</li>
+                <li>kanji</li>
+              </ul>
+              <nav class="links">
+                <a class="jisho" href="http://jisho.org/search/漢字">Jisho
+                  <i><img src="http://assets.jisho.org/assets/favicon-062c4a0240e1e6d72c38aa524742c2d558ee6234497d91dd6b75a182ea823d65.ico" /></i></a>
+              </nav>
+            </div>
+          </li>
+          <li>
+            <div class="jukugo">
+              <ruby>
+                <rb><a class="kanji" href="#">文</a></rb><rt>も</rt>
+                <rb><a class="kanji" href="#">字</a></rb><rt>じ</rt>
+              </ruby>
+              <ul class="translation" lang="en">
+                <li>letter</li>
+                <li>character</li>
+              </ul>
+              <nav class="links">
+                <a class="jisho" href="http://jisho.org/search/文字">Jisho
+                  <i><img src="http://assets.jisho.org/assets/favicon-062c4a0240e1e6d72c38aa524742c2d558ee6234497d91dd6b75a182ea823d65.ico" /></i></a>
+              </nav>
+            </div>
+        </ul>
+      </section>
+      <section id="notes">
+        <h3>Notes</h3>
+        <p>
+          None.
+        </p>
+      </section>
+    </article>
+    <footer>
+    </footer>
+  </body>
+</html>

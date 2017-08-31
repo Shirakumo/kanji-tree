@@ -1,0 +1,119 @@
+(:let ()
+  (body
+   :margin 0
+   :font-family sans-serif
+   :background (hex F8F8F8)
+   :font-size 1.2em
+   (a
+    :text-decoration none
+    :color (hex 0088ee))
+   ("a:hover"
+    :cursor pointer
+    :color (hex ee8800) !important)
+   (img
+    :max-width 100%
+    :max-height 100%)
+   (>header
+    :background (hex 151515)
+    :border-bottom 3px solid (hex 0088ee)
+    :color (hex eeeeee)
+    (h1
+     :text-align center
+     :white-space nowrap
+     :font-weight normal
+     :font-size inherit
+     :margin 0
+     :padding 5px
+     (a :color inherit)))
+   (article
+    :margin 20px auto 0 auto
+    :max-width 800px
+    (.links
+     :display flex
+     :flex-direction column
+     :text-align right
+     (a
+      :white-space nowrap
+      (i
+       :display inline-block
+       :width 16px
+       :height 16px)))
+    (a.kanji
+     :color (hex 001155))
+    (ul.translation
+     :list-style none
+     :padding 0
+     :margin 0
+     (li
+      :display inline)
+     ("li:after" :content ",")
+     ("li:last-child:after" :content ""))
+    ("#sequence"
+     :font-size 0.8em
+     :flex-grow 1
+     :display flex
+     :align-items center
+     (a
+      :color inherit
+      :display inline-block
+      :padding 5px
+      :text-align center
+      :width 100px)
+     (.number
+      :text-align center
+      :flex-grow 1)
+     (".number:before"
+      :content "#"))
+    (>header
+     :display flex
+     :align-items center
+     :margin 0 0 20px 0
+     (div
+      :flex-grow 1)
+     (h2
+      :font-size 5em
+      :margin 20px
+      :float left
+      :color inherit)
+     (ul
+      :list-style none
+      :padding 0
+      :margin 0
+      (li :display inline))
+     (.translation
+      :font-size 2em
+      :margin 0)
+     (".components:before"
+      :content "Components: "
+      :display inline-block :min-width 120px)
+     (".radicals:before"
+      :content "Radicals: "
+      :display inline-block :min-width 120px)
+     (".constitutes:before"
+      :content "Constitutes: "
+      :display inline-block :min-width 120px))
+    ("#onkun"
+     :display flex
+     (>* :width 50%))
+    ((:or "#onyomi" "#kunyomi" "#jukugo")
+     (>ul
+      :list-style none
+      :padding 0
+      (>li :margin 10px)))
+    (section
+     (h3
+      :font-size 1.5em
+      :margin 0))
+    ((:or div.onyomi div.kunyomi div.jukugo)
+     (ruby
+      :display inline-block
+      :min-width 100px))
+    (div.jukugo
+     :display flex
+     :align-items center
+     (ruby
+      :margin 0 10px 0 0)
+     (.translation
+      :flex-grow 1)))
+   (>footer
+    )))
