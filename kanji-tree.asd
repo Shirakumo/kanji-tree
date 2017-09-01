@@ -15,6 +15,9 @@
   :homepage "https://github.com/Shirakumo/kanji-tree"
   :serial T
   :components ((:file "module")
-               (:file "objects"))
-  :depends-on ((:interface :user)
-               :r-clip))
+               (:file "toolkit")
+               (:file "objects")
+               (:file "data"))
+  :depends-on (:r-clip
+               :trivial-indent
+               :cl-unicode))
