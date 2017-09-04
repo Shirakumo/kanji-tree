@@ -89,7 +89,8 @@
     (format stream "~c" (character kanji))))
 
 (defmethod (setf components) :around (new (kanji kanji))
-  (let* ((new (remove-duplicates (mapcar #'ensure-kanji new)))
+  (let* ((new (sort (remove-duplicates (mapcar #'ensure-kanji new))
+                    #'< :key (lambda (k) (char-code (character k)))))
          (rem (set-difference (components kanji) new))
          (add (set-difference new (components kanji))))
     (call-next-method new kanji)
@@ -100,7 +101,8 @@
     new))
 
 (defmethod (setf constitutes) :around (new (kanji kanji))
-  (let* ((new (remove-duplicates (mapcar #'ensure-kanji new)))
+  (let* ((new (sort (remove-duplicates (mapcar #'ensure-kanji new))
+                    #'< :key (lambda (k) (char-code (character k)))))
          (rem (set-difference (constitutes kanji) new))
          (add (set-difference new (constitutes kanji))))
     (call-next-method new kanji)
@@ -117,9 +119,11 @@
   (if (radical-p kanji)
       (list kanji)
       (let ((radicals ()))
-        (dolist (component (components kanji) radicals)
+        (dolist (component (components kanji))
           (dolist (radical (radicals component))
-            (pushnew radical radicals))))))
+            (pushnew radical radicals)))
+        (sort radicals
+              #'< :key (lambda (k) (char-code (character k)))))))
 
 (defclass onyomi (translatable)
   ((text :initarg :text :accessor text))
