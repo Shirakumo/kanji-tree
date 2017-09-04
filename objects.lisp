@@ -23,6 +23,10 @@
     (symbol
      (ensure-kanji (string kanji-ish) errorp))))
 
+(defun list-kanji ()
+  (loop for v being the hash-values of *kanji*
+        collect v))
+
 (defun ensure-jukugo (jukugo-ish &optional (errorp T))
   (etypecase jukugo-ish
     (jukugo
@@ -37,9 +41,15 @@
   ((translations :initarg :translations :accessor translations))
   (:default-initargs :translations ()))
 
+(defmethod initialize-instance :before ((translatable translatable) &key translations)
+  (dolist (translation translations)
+    (check-type translation translation)))
+
 (defclass kanji (translatable)
   ((character :initarg :character :accessor character)
    (index :initarg :index :accessor index)
+   (level :initarg :level :accessor level)
+   (rank :initarg :rank :accessor rank)
    (components :initarg :components :accessor components)
    (constitutes :initform () :accessor constitutes)
    (notes :initarg :notes :accessor notes)
@@ -48,15 +58,17 @@
    (jukugo :initform () :accessor jukugo))
   (:default-initargs
    :character (error "CHARACTER required")
+   :level NIL
+   :rank NIL
    :components ()
-   :index (hash-table-count *kanji*)
+   :index NIL
    :notes "None."
    :onyomi ()
    :kunyomi ()))
 
 (defmethod initialize-instance :around ((kanji kanji) &rest initargs)
   (let ((args (copy-list initargs)))
-    (setf (getf args :components) (mapcar #'ensure-kanji (getf args :components)))
+    (setf (getf args :components) (remove-duplicates (mapcar #'ensure-kanji (getf args :components))))
     (setf (getf args :character) (cl:character (getf args :character)))
     (setf (getf args :text) (string (getf args :text)))
     (apply #'call-next-method kanji args)))
@@ -77,7 +89,7 @@
     (format stream "~c" (character kanji))))
 
 (defmethod (setf components) :around (new (kanji kanji))
-  (let* ((new (mapcar #'ensure-kanji new))
+  (let* ((new (remove-duplicates (mapcar #'ensure-kanji new)))
          (rem (set-difference (components kanji) new))
          (add (set-difference new (components kanji))))
     (call-next-method new kanji)
@@ -88,7 +100,7 @@
     new))
 
 (defmethod (setf constitutes) :around (new (kanji kanji))
-  (let* ((new (mapcar #'ensure-kanji new))
+  (let* ((new (remove-duplicates (mapcar #'ensure-kanji new)))
          (rem (set-difference (constitutes kanji) new))
          (add (set-difference new (constitutes kanji))))
     (call-next-method new kanji)
@@ -187,12 +199,13 @@
 (defmacro define-kanji (char &body args)
   (let ((object (gensym "OBJECT")))
     (destructuring-bind (character &rest components) (if (listp char) char (list char))
-      (destructuring-bind (&key index translations onyomi kunyomi notes) (gather-kargs args)
+      (destructuring-bind (&key level rank translations onyomi kunyomi notes) (gather-kargs args)
         `(let ((,object (or (ensure-kanji ',character NIL)
                             (make-instance 'kanji :character ',character))))
-           (setf (index ,object) ,index)
+           (setf (level ,object) ',(first level))
+           (setf (rank ,object) ',(first rank))
            (setf (components ,object) ',components)
-           (setf (notes ,object) ,notes)
+           (setf (notes ,object) ,(first notes))
            (setf (translations ,object) (list ,@(expand-translations translations)))
            (setf (onyomi ,object)
                  (list ,@(loop for on in onyomi
@@ -214,3 +227,31 @@
     `(let ((,object (or (ensure-jukugo ',text NIL)
                         (make-instance 'jukugo :text ',text))))
        (setf (translations ,object) (list ,@(expand-translations translations))))))
+
+(defun print-translation (translation)
+  (format NIL "(~a~{ ~s~})"
+          (language translation)
+          (text translation)))
+
+(defun print-kanji (kanji)
+  (let ((kanji (ensure-kanji kanji)))
+    (format NIL "~
+\(define-kanji (~a~{ ~a~})
+  :level ~s
+  :rank ~s
+  :translations ~{~a~}
+  :notes ~s
+  :onyomi~{
+  (~a~{ ~a~^~%    ~})~}
+  :kunyomi~{
+  (~a~{ ~a~^~%    ~})~})"
+            (character kanji)
+            (mapcar #'character (components kanji))
+            (level kanji)
+            (rank kanji)
+            (mapcar #'print-translation (translations kanji))
+            (notes kanji)
+            (loop for on in (onyomi kanji)
+                  collect (text on) collect (mapcar #'print-translation (translations on)))
+            (loop for kun in (kunyomi kanji)
+                  collect (text kun) collect (mapcar #'print-translation (translations kun))))))

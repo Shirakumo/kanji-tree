@@ -6,7 +6,8 @@
 
 (defpackage #:kanji-tree-scraping
   (:nicknames #:org.shirakumo.radiance.kanji-tree.scraping)
-  (:use #:cl))
+  (:use #:cl #:kanji-tree)
+  (:shadowing-import-from #:kanji-tree #:character))
 
 (in-package #:org.shirakumo.radiance.kanji-tree.scraping)
 
@@ -34,17 +35,20 @@
       (nreverse parts))))
 
 (defun jisho-kanji (kanji)
-  (let* ((kanji (character kanji))
+  (let* ((kanji (cl:character kanji))
          (page (plump:parse (dex:get (quri:make-uri :scheme "http"
                                                     :host "jisho.org"
                                                     :path "/search/"
                                                     :query (quri:url-encode-params `(("keyword" . ,(format NIL "~a #kanji" kanji))))))))
          (data (lquery:$ page ".kanji")))
+    (when (= 0 (length data))
+      (error "No kanji data found for ~a" kanji))
     (list :kanji kanji
           :level (lquery:$1 data ".kanji_stats .jlpt strong" (text))
           :rank (parse-integer (lquery:$1 data ".kanji_stats .frequency strong" (text)))
           :strokes (parse-integer (lquery:$1 data ".kanji-details__stroke_count strong" (text)))
-          :components (coerce (lquery:$ data ".radicals" (aref 1) "a" (text) (each #'character)) 'list)
+          :components (remove-duplicates (coerce (lquery:$ data ".radicals" (aref 1) "a" (text) (each #'cl:character)) 'list)
+                                         :test #'equal)
           :meanings (split (lquery:$1 data ".kanji-details__main-meanings" (text))
                            #\, :key (lambda (s) (string-trim *trim-chars* s)))
           :kunyomi (let ((kunyomi (lquery:$ data ".kun_yomi .kanji-details__main-readings-list a" (text)))
@@ -65,6 +69,8 @@
          (data (lquery:$ page ".concept_light .meanings-wrapper" (children)))
          (meanings ())
          (forms ()))
+    (when (= 0 (length data))
+      (error "No word data found for ~a" word))
     (loop with type = NIL
           for node across data
           for class = (plump:attribute node "class")
@@ -80,3 +86,63 @@
           :forms (loop for form in (nreverse forms)
                        collect (subseq form 0 (position #\Space form)))
           :meanings (nreverse meanings))))
+
+(defun jisho-iterate (uri function)
+  (loop (let* ((page (plump:parse (dex:get uri)))
+               (data (lquery:$ page "#main_results"))
+               (next (lquery:$1 data "a.more" (attr :href))))
+          (funcall function data)
+          (sleep 1)
+          (if next
+              (setf uri next)
+              (return)))))
+
+(defun jisho-grade-kanji (grade)
+  (let ((kanji ()))
+    (jisho-iterate (quri:make-uri :scheme "http"
+                                  :host "jisho.org"
+                                  :path "/search/"
+                                  :query (quri:url-encode-params `(("keyword" . ,(format NIL "#kanji #grade:~a" grade)))))
+                   (lambda (data)
+                     (lquery:$ data ".entry .literal_block a" (text) (each (lambda (a) (push a kanji) T)))))
+    (nreverse kanji)))
+
+(defun jisho-define-kanji (kanji &key force)
+  (or (unless force (ensure-kanji kanji NIL))
+      (destructuring-bind (&key kanji level rank components meanings kunyomi onyomi &allow-other-keys)
+          (handler-case (jisho-kanji kanji)
+            (error (e)
+              (warn "No data found for ~a." kanji)
+              (list :kanji kanji)))
+        (make-instance 'kanji
+                       :character kanji
+                       :level level
+                       :rank rank
+                       :components (loop for c in components
+                                         unless (string= c kanji)
+                                         collect (or (ensure-kanji c NIL)
+                                                     (jisho-define-kanji c)))
+                       :translations (list (make-instance 'translation
+                                                          :language "en"
+                                                          :text meanings))
+                       :onyomi (loop for (on . text) in onyomi
+                                     collect (make-instance 'onyomi
+                                                            :text on
+                                                            :translations
+                                                            (when text
+                                                              (list (make-instance 'translation
+                                                                                   :language "en"
+                                                                                   :text text)))))
+                       :kunyomi (loop for (kun . text) in kunyomi
+                                      collect (make-instance 'kunyomi
+                                                             :text (cl-ppcre:regex-replace "\\." kun "/")
+                                                             :translations
+                                                             (when text
+                                                               (list (make-instance 'translation
+                                                                                    :language "en"
+                                                                                    :text text)))))))))
+
+(defun jisho-define-grade (grade)
+  (handler-bind ((warning #'muffle-warning))
+    (dolist (kanji (jisho-grade-kanji grade))
+      (format T "~&~a~%~%" (print-kanji (jisho-define-kanji kanji))))))

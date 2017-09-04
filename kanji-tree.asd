@@ -16,8 +16,7 @@
   :serial T
   :components ((:file "module")
                (:file "toolkit")
-               (:file "objects")
-               (:file "data"))
+               (:file "objects"))
   :depends-on (:r-clip
                :trivial-indent
                :cl-unicode))

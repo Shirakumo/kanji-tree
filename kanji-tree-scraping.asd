@@ -14,4 +14,6 @@
   :serial T
   :components ((:file "scraping"))
   :depends-on (:dexador
-               :lquery))
+               :lquery
+               :cl-ppcre
+               :kanji-tree))
