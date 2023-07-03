@@ -1,9 +1,3 @@
-#|
- This file is a part of kanji-tree
- (c) 2017 Shirakumo http://tymoon.eu (shinmera@tymoon.eu)
- Author: Nicolas Hafner <shinmera@tymoon.eu>
-|#
-
 (in-package #:org.shirakumo.radiance.kanji-tree)
 
 (defvar *kanji* (make-hash-table :test 'eql))

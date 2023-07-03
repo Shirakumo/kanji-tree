@@ -1,9 +1,3 @@
-#|
- This file is a part of kanji-tree
- (c) 2017 Shirakumo http://tymoon.eu (shinmera@tymoon.eu)
- Author: Nicolas Hafner <shinmera@tymoon.eu>
-|#
-
 (defpackage #:kanji-tree-scraping
   (:nicknames #:org.shirakumo.radiance.kanji-tree.scraping)
   (:use #:cl #:kanji-tree)
